@@ -1,0 +1,63 @@
+---
+title: "Testing R Markdown"
+author: "Monika Riehn"
+date: "2023-06-03"
+output:
+  pdf_document: 
+    latex_engine: xelatex
+  html_document: default
+mainfont: Liberation Sans
+monofont: Liberation Mono
+---
+
+# Using SQL in R Markdown
+
+```{r, include=FALSE}
+dsn_database = "analysis"
+dsn_hostname = "localhost"
+dsn_port = 5432
+dsn_uid = "postgres"
+dsn_pwd = "XXX" # your password
+```
+
+```{r, include = FALSE}
+library(RPostgreSQL)
+library(tinytex)
+```
+
+```{r, include = FALSE}
+drv <- dbDriver("PostgreSQL")
+```
+
+```{r, include=FALSE}
+con <- dbConnect(
+  drv,
+  dbname = dsn_database,
+  host = dsn_hostname,
+  port = dsn_port,
+  user = dsn_uid,
+  password = dsn_pwd
+)
+```
+
+## 1. Make an SQL query
+
+```{sql connection=con}
+SELECT * FROM teachers
+```
+
+## 2. Save the output of a query with {..., output.var = "df_name"}
+
+```{sql connection=con, output.var = "names"}
+SELECT first_name, last_name
+FROM teachers
+```
+
+## 3. Use R-code on the output of the SQL query
+
+```{r}
+str(names)
+```
+
+# Be happy :-)
+
